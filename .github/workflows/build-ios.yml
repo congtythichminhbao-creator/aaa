@@ -1,0 +1,34 @@
+name: Build iOS IPA
+on:
+  push:
+    branches: [ main, master ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: macos-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Setup Xcode
+      uses: maxim-lobanov/setup-xcode@v1
+      with:
+        xcode-version: latest-stable
+
+    - name: Install ldid
+      run: brew install ldid
+
+    - name: Make script executable
+      run: chmod +x ipabuild.sh
+
+    - name: Build IPA
+      run: ./ipabuild.sh
+
+    - name: Upload IPA
+      uses: actions/upload-artifact@v3
+      with:
+        name: noti-ipa-file
+        path: build/noti.tipa
+        retention-days: 30
